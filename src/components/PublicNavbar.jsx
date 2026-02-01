@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import PublicSearch from "@/components/PublicSearch";
+import CartDrawer from "@/components/CartDrawer";
 import { ShoppingBag } from "lucide-react";
 
 function CartContents() {
