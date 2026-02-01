@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "../providers";
 
 export default function AdminLayout({ children }) {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -20,7 +21,8 @@ export default function AdminLayout({ children }) {
     <div className="min-h-screen w-full overflow-x-hidden bg-nude text-stone-950">
       <div className="flex min-h-screen">
         {/* ================= DESKTOP SIDEBAR ================= */}
-        <aside className="hidden md:flex md:w-64 flex-col border-r border-zinc-200 bg-nude">
+        {pathname !== "/admin/login" && (
+          <aside className="hidden md:flex md:w-64 flex-col border-r border-zinc-200 bg-nude">
           <div className="p-4 border-b">
             <div className="text-lg font-semibold">Admin</div>
           </div>
@@ -32,7 +34,8 @@ export default function AdminLayout({ children }) {
             <NavLink href="/admin/inner-circle">Inner Circle</NavLink>
             <NavLink href="/admin/settings">Settings</NavLink>
           </nav>
-        </aside>
+          </aside>
+        )}
 
         {/* ================= MAIN AREA ================= */}
         <div className="flex-1 flex flex-col min-w-0">
@@ -57,7 +60,7 @@ export default function AdminLayout({ children }) {
       </div>
 
       {/* ================= MOBILE DRAWER ================= */}
-      {mobileOpen && (
+      {mobileOpen && pathname !== "/admin/login" && (
         <div className="fixed inset-0 z-40 md:hidden">
           {/* overlay */}
           <div
