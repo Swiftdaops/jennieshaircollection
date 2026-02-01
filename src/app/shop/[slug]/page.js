@@ -1,7 +1,7 @@
 import Link from "next/link";
 import AddToCartButton from '@/components/AddToCartButton';
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
 
 function formatPrice(p) {
   if (p?.discount?.isActive) {

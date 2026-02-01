@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const apiBase =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
 
   async function fetchMe() {
     try {

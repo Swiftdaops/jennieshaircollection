@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
 
 export default function InnerCircleAdmin() {
   const [items, setItems] = useState([]);

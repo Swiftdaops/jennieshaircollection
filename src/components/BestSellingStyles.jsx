@@ -16,7 +16,7 @@ const DotLottie = dynamic(
 
 import "swiper/css";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
 
 function formatPrice(p) {
   if (p?.discount?.isActive) {
