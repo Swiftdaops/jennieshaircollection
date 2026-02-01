@@ -1,117 +1,5 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import emailjs from '@emailjs/browser';
-
-const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
-
-function formatMoney(n) {
-  return `₦${(n || 0).toLocaleString()}`;
-}
-
-export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  async function load() {
-    setLoading(true);
-    try {
-      const res = await fetch(`${apiBase}/api/orders`, { credentials: 'include' });
-      if (res.ok) setOrders(await res.json());
-    } catch (e) {
-      console.error(e);
-    } finally { setLoading(false); }
-  }
-
-  useEffect(() => { load(); }, []);
-
-  async function changeStatus(id, status) {
-    try {
-      const res = await fetch(`${apiBase}/api/orders/${id}/status`, {
-        method: 'PUT',
-        headers: { 'content-type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ status }),
-      });
-      if (res.ok) {
-        const updated = await res.json();
-        setOrders((s) => s.map(o => o._id === updated._id ? updated : o));
-      }
-    } catch (e) { console.error(e); }
-  }
-
-  async function removeOrder(id) {
-    if (!confirm('Delete this order?')) return;
-    try {
-      const res = await fetch(`${apiBase}/api/orders/${id}`, { method: 'DELETE', credentials: 'include' });
-      if (res.ok) setOrders((s) => s.filter(o => o._id !== id));
-    } catch (e) { console.error(e); }
-  }
-
-  async function sendReceipt(order) {
-    if (!order.email) return alert('Order has no email to send to.');
-
-    const service = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-    const template = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-    if (!service || !template || !publicKey) return alert('EmailJS not configured.');
-
-    const itemsText = (order.items || []).map(it => `${it.name} x${it.quantity} — ₦${it.price}`).join('\n');
-
-    const templateParams = {
-      to_name: order.customerName,
-      to_email: order.email,
-      order_id: order._id,
-      items: itemsText,
-      total: formatMoney(order.totalAmount),
-      status: order.status,
-    };
-
-    try {
-      await emailjs.send(service, template, templateParams, publicKey);
-      alert('Receipt sent');
-    } catch (e) {
-      console.error(e);
-      alert('Failed to send receipt');
-    }
-  }
-
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-semibold mb-4">Orders</h2>
-      {loading && <div>Loading…</div>}
-      {!loading && orders.length === 0 && <div>No orders yet.</div>}
-      <div className="space-y-4">
-        {orders.map(order => (
-          <div key={order._id} className="p-4 bg-white rounded shadow">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="font-semibold">{order.customerName} — {order.whatsappNumber} {order.email ? `— ${order.email}` : ''}</div>
-                <div className="text-sm text-zinc-600">{new Date(order.createdAt).toLocaleString()}</div>
-                <div className="mt-2 text-sm">{(order.items || []).map(it => <div key={it.productId}>{it.name} × {it.quantity} — ₦{it.price}</div>)}</div>
-                <div className="mt-2 font-semibold">Total: {formatMoney(order.totalAmount)}</div>
-              </div>
-
-              <div className="flex flex-col items-end gap-2">
-                <div className="text-sm">Status: <span className="font-medium">{order.status}</span></div>
-                <div className="flex flex-col gap-2 mt-2">
-                  <button onClick={() => changeStatus(order._id, 'accepted')} className="px-3 py-1 bg-green-600 text-white rounded">Accept</button>
-                  <button onClick={() => changeStatus(order._id, 'in_transit')} className="px-3 py-1 bg-amber-500 text-white rounded">In transit</button>
-                  <button onClick={() => changeStatus(order._id, 'delivered')} className="px-3 py-1 bg-sky-600 text-white rounded">Delivered</button>
-                  <button onClick={() => removeOrder(order._id)} className="px-3 py-1 bg-red-500 text-white rounded">Delete</button>
-                  <button onClick={() => sendReceipt(order)} className="px-3 py-1 bg-lime-600 text-white rounded">Send Receipt</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-"use client";
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -123,7 +11,7 @@ import {
   TableBody,
 } from "@/components/ui/table";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -140,14 +28,14 @@ export default function OrdersPage() {
         console.error("Failed to load orders", err);
         if (mounted) setOrders([]);
       });
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   function sanitizePhone(phone) {
     if (!phone) return "";
-    // keep digits and leading +
     const cleaned = phone.toString().trim().replace(/[^0-9+]/g, "");
-    // remove leading zeros
     return cleaned.replace(/^0+/, "");
   }
 
