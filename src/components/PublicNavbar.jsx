@@ -37,7 +37,9 @@ function CartContents() {
       </ul>
       <div className="mt-4 flex items-center justify-between font-semibold">Total <span>₦{total.toLocaleString()}</span></div>
       <div className="mt-4">
-        <button className="w-full bg-lime-600 text-white px-4 py-2 rounded">Checkout</button>
+        <Link href="/checkout">
+          <button className="w-full bg-[#6b0f1a] text-white px-4 py-2 rounded">Proceed to checkout</button>
+        </Link>
       </div>
     </div>
   );
@@ -118,18 +120,7 @@ export default function PublicNavbar() {
       )}
 
       {/* Cart Drawer */}
-      {drawerOpen && (
-        <div className="fixed inset-0 z-50">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setDrawerOpen(false)} />
-          <aside className="absolute right-0 top-0 h-full w-96 bg-white p-4 overflow-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold">Cart</h3>
-              <button onClick={() => setDrawerOpen(false)} className="p-2">✕</button>
-            </div>
-            <CartContents />
-          </aside>
-        </div>
-      )}
+          <CartDrawer open={drawerOpen} onOpenChange={(v) => setDrawerOpen(Boolean(v))} />
 
       {/* Mobile drawer/menu */}
       {mobileOpen && (
