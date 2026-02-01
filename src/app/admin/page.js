@@ -13,7 +13,7 @@ export default function AdminIndex() {
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading === false && !user) {
       router.push("/admin/login");
     }
   }, [loading, user, router]);

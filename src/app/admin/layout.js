@@ -12,7 +12,8 @@ export default function AdminLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    if (!loading && !user) {
+    // Only redirect when we've finished the auth check and there's no user.
+    if (loading === false && !user) {
       router.push("/admin/login");
     }
   }, [loading, user, router]);
