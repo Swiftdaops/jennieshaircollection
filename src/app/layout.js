@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  metadataBase: new URL("https://yourdomain.com"), // change to your real domain
+  metadataBase: new URL("https://www.jennieshairscollection.store"), // change to your real domain
 
   title: {
     default: "Jennie’s Hairs Collection | Luxury Wigs & Hair Extensions",
@@ -43,7 +43,7 @@ export const metadata = {
     title: "Jennie’s Hairs Collection | Luxury Wigs for Elegant Queens",
     description:
       "Premium luxury wigs and hair extensions designed for elegance, confidence, and royalty.",
-    url: "https://yourdomain.com",
+    url: "https://www.jennieshairscollection.store",
     siteName: "Jennie’s Hairs Collection",
     images: [
       {

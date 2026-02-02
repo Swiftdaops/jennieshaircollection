@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { getApiBase } from "@/lib/apiBase";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const apiBase = getApiBase();
 
 export default function StockPage() {
   const [products, setProducts] = useState([]);

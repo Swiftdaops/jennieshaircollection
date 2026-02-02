@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { apiClient } from "@/lib/apiClient";
 
 export default function Footer() {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });
@@ -17,13 +16,11 @@ export default function Footer() {
     setStatus("loading");
 
     try {
-      const res = await fetch(`${apiBase}/api/inner-circle`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) throw new Error();
+      await apiClient.post(
+        "/api/inner-circle",
+        form,
+        { headers: { "Content-Type": "application/json" } }
+      );
 
       setStatus("success");
       setForm({ name: "", email: "", phone: "" });

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../providers";
+import { apiClient } from "@/lib/apiClient";
 
 export default function AdminLogin() {
   const { login } = useAuth();
@@ -23,16 +24,11 @@ export default function AdminLogin() {
       await login({ email, password });
       console.debug("AdminLogin: login succeeded, waiting for /api/auth/me to be available");
 
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
       async function waitForMe(attempts = 8, interval = 250) {
         for (let i = 0; i < attempts; i++) {
           try {
-            const res = await fetch(`${apiBase}/api/auth/me`, { credentials: "include" });
-            if (res.ok) {
-              const data = await res.json().catch(() => null);
-              if (data) return data;
-            }
+            const { data } = await apiClient.get("/api/auth/me");
+            if (data) return data;
           } catch (err) {
             // ignore and retry
           }

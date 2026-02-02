@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { apiClient, getAxiosErrorMessage } from "@/lib/apiClient";
 
 const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2340000000000"; // replace with real number in env
 
@@ -57,7 +58,6 @@ export default function CheckoutPage() {
       if (!address.trim()) return alert("Please enter your delivery address");
       if (items.length === 0) return alert("Your cart is empty");
 
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       const payload = {
         customerName: name.trim(),
         whatsappNumber: phone.trim(),
@@ -76,16 +76,11 @@ export default function CheckoutPage() {
 
       setSubmitting(true);
       try {
-        const res = await fetch(`${apiBase}/api/orders/checkout`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        const data = await res.json().catch(() => null);
-        if (!res.ok) {
-          return alert(data?.message || "Could not create order. Please try again.");
-        }
+        const { data } = await apiClient.post(
+          "/api/orders/checkout",
+          payload,
+          { headers: { "Content-Type": "application/json" } }
+        );
 
         try {
           localStorage.removeItem("cart");
@@ -97,7 +92,7 @@ export default function CheckoutPage() {
         const url = data?.whatsappLink || `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello Jennie, I just placed an order. My name is ${name.trim()}.`)}`;
         window.open(url, "_blank");
       } catch (e) {
-        alert(e?.message || "Network error. Please try again.");
+        alert(getAxiosErrorMessage(e, "Network error. Please try again."));
       } finally {
         setSubmitting(false);
       }

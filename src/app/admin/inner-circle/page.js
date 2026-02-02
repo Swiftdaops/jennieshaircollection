@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { apiClient, getAxiosErrorMessage } from "@/lib/apiClient";
 
 export default function InnerCircleAdmin() {
   const [items, setItems] = useState([]);
@@ -13,12 +12,10 @@ export default function InnerCircleAdmin() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${apiBase}/api/inner-circle`, { credentials: 'include' });
-      if (!res.ok) throw new Error('Failed to load');
-      const data = await res.json();
+      const { data } = await apiClient.get("/api/inner-circle");
       setItems(data || []);
     } catch (err) {
-      setError(err.message || 'Failed');
+      setError(getAxiosErrorMessage(err, 'Failed'));
     } finally {
       setLoading(false);
     }
@@ -29,11 +26,10 @@ export default function InnerCircleAdmin() {
   async function handleDelete(id) {
     if (!confirm('Delete this signup?')) return;
     try {
-      const res = await fetch(`${apiBase}/api/inner-circle/${id}`, { method: 'DELETE', credentials: 'include' });
-      if (!res.ok) throw new Error('Failed to delete');
+      await apiClient.delete(`/api/inner-circle/${id}`);
       setItems((s) => s.filter(i => i._id !== id));
     } catch (err) {
-      alert(err.message || 'Failed to delete');
+      alert(getAxiosErrorMessage(err, 'Failed to delete'));
     }
   }
 

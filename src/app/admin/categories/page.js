@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { apiClient, getAxiosErrorMessage } from "@/lib/apiClient";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
@@ -16,12 +15,9 @@ export default function CategoriesPage() {
 
   useEffect(() => {
     let mounted = true;
-    fetch(`${apiBase}/api/categories`)
-      .then((r) => {
-        if (!r.ok) throw new Error(`Status ${r.status}`);
-        return r.json();
-      })
-      .then((data) => mounted && setCategories(data || []))
+    apiClient
+      .get("/api/categories")
+      .then(({ data }) => mounted && setCategories(data || []))
       .catch((err) => {
         console.error("Failed to load categories", err);
         if (mounted) setCategories([]);
@@ -48,17 +44,13 @@ export default function CategoriesPage() {
               onClick={async () => {
                 if (!confirm(`Delete category "${c.name}"? This cannot be undone.`)) return;
                 try {
-                  const res = await fetch(`${apiBase}/api/categories/${c._id}`, {
-                    method: 'DELETE',
-                    credentials: 'include',
-                  });
-                  if (!res.ok) throw new Error('Failed to delete');
+                  await apiClient.delete(`/api/categories/${c._id}`);
                   setCategories((prev) => prev.filter((x) => x._id !== c._id));
                   // notify other pages to refresh categories
                   try { window.dispatchEvent(new Event('categoriesUpdated')); } catch(e) {}
                 } catch (err) {
                   console.error(err);
-                  alert('Failed to delete category');
+                  alert(getAxiosErrorMessage(err, 'Failed to delete category'));
                 }
               }}
             >
@@ -68,20 +60,17 @@ export default function CategoriesPage() {
               <>
                 <Button size="sm" onClick={async () => {
                   try {
-                    const res = await fetch(`${apiBase}/api/categories/${c._id}`, {
-                      method: 'PUT',
-                      credentials: 'include',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({ name: editingName, description: editingDescription }),
-                    });
-                    if (!res.ok) throw new Error('Failed to update');
-                    const updated = await res.json();
+                    const { data: updated } = await apiClient.put(
+                      `/api/categories/${c._id}`,
+                      { name: editingName, description: editingDescription },
+                      { headers: { 'Content-Type': 'application/json' } }
+                    );
                     setCategories((prev) => prev.map((it) => it._id === updated._id ? updated : it));
                     setEditingId(null);
                     try { window.dispatchEvent(new Event('categoriesUpdated')); } catch(e) {}
                   } catch (err) {
                     console.error(err);
-                    alert('Failed to update category');
+                    alert(getAxiosErrorMessage(err, 'Failed to update category'));
                   }
                 }}>Save</Button>
                 <Button size="sm" variant="ghost" onClick={() => setEditingId(null)}>Cancel</Button>
@@ -119,14 +108,11 @@ export default function CategoriesPage() {
             <div className="flex items-center gap-2">
               <Button onClick={async () => {
                 try {
-                  const res = await fetch(`${apiBase}/api/categories`, {
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, description }),
-                  });
-                  if (!res.ok) throw new Error('Failed to create');
-                  const created = await res.json();
+                  const { data: created } = await apiClient.post(
+                    '/api/categories',
+                    { name, description },
+                    { headers: { 'Content-Type': 'application/json' } }
+                  );
                   setCategories((prev) => [created, ...prev]);
                   try { window.dispatchEvent(new Event('categoriesUpdated')); } catch(e) {}
                   setName('');
@@ -134,7 +120,7 @@ export default function CategoriesPage() {
                   setShowForm(false);
                 } catch (err) {
                   console.error(err);
-                  alert('Failed to create category');
+                  alert(getAxiosErrorMessage(err, 'Failed to create category'));
                 }
               }}>Create</Button>
               <Button variant="ghost" onClick={() => { setShowForm(false); setName(''); setDescription(''); }}>Cancel</Button>

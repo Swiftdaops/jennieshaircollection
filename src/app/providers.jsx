@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { apiClient, getAxiosErrorMessage } from "@/lib/apiClient";
 
 const AuthContext = createContext(null);
 
@@ -14,21 +15,10 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
   async function fetchMe() {
     try {
       setLoading(true);
-      const res = await fetch(`${apiBase}/api/auth/me`, {
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        setUser(null);
-        return;
-      }
-
-      const data = await res.json();
+      const { data } = await apiClient.get("/api/auth/me");
       setUser(data);
     } catch {
       setUser(null);
@@ -38,26 +28,16 @@ export function AuthProvider({ children }) {
   }
 
   async function login({ email, password }) {
-    const res = await fetch(`${apiBase}/api/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw new Error(body.message || "Login failed");
+    try {
+      await apiClient.post("/api/auth/login", { email, password }, { headers: { "Content-Type": "application/json" } });
+    } catch (err) {
+      throw new Error(getAxiosErrorMessage(err, "Login failed"));
     }
-
     await fetchMe();
   }
 
   async function logout() {
-    await fetch(`${apiBase}/api/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    }).catch(() => {});
+    await apiClient.post("/api/auth/logout").catch(() => {});
     setUser(null);
   }
 

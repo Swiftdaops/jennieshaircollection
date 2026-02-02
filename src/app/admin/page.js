@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../providers";
 import AdminWelcome from "../../components/admin/AdminWelcome";
+import { apiClient, getAxiosErrorMessage } from "@/lib/apiClient";
 
 export default function AdminIndex() {
   const { user, loading } = useAuth();
@@ -23,13 +24,8 @@ export default function AdminIndex() {
     async function loadInsights() {
       setLoadingInsights(true);
       try {
-        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000") + "/api/orders/insights", {
-          credentials: "include",
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setInsights(data);
-        }
+        const { data } = await apiClient.get("/api/orders/insights");
+        setInsights(data);
       } catch (err) {
         // ignore
       } finally {
@@ -42,30 +38,21 @@ export default function AdminIndex() {
 
   if (loading) return <div className="p-8">Loading...</div>;
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
   async function handleMarkBestSeller() {
     const id = window.prompt("Enter product ID to mark as best seller:");
     if (!id) return;
     setActionLoading(true);
     try {
-      const res = await fetch(`${apiBase}/api/products/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ isBestSeller: true }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        alert(err.message || 'Failed to update product');
-      } else {
-        alert('Product updated as best seller');
-        // refresh insights
-        const r = await fetch(`${apiBase}/api/orders/insights`, { credentials: 'include' });
-        if (r.ok) setInsights(await r.json());
-      }
+      await apiClient.put(
+        `/api/products/${id}`,
+        { isBestSeller: true },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      alert("Product updated as best seller");
+      const { data } = await apiClient.get("/api/orders/insights");
+      setInsights(data);
     } catch (e) {
-      alert(e.message || 'Request failed');
+      alert(getAxiosErrorMessage(e, "Request failed"));
     } finally {
       setActionLoading(false);
     }

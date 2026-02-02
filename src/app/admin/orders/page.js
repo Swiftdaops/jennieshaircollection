@@ -11,19 +11,16 @@ import {
   TableBody,
 } from "@/components/ui/table";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { apiClient } from "@/lib/apiClient";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     let mounted = true;
-    fetch(`${apiBase}/api/orders`, { credentials: "include" })
-      .then((r) => {
-        if (!r.ok) throw new Error(`Status ${r.status}`);
-        return r.json();
-      })
-      .then((data) => mounted && setOrders(data || []))
+    apiClient
+      .get("/api/orders")
+      .then(({ data }) => mounted && setOrders(data || []))
       .catch((err) => {
         console.error("Failed to load orders", err);
         if (mounted) setOrders([]);

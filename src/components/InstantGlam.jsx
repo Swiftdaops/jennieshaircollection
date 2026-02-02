@@ -5,8 +5,9 @@ import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
+import { getApiBase } from "@/lib/apiBase";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const apiBase = getApiBase();
 
 function formatPrice(p) {
   if (p?.discount?.isActive) {

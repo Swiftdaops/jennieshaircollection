@@ -1,7 +1,8 @@
 import Link from "next/link";
 import AddToCartButton from '@/components/AddToCartButton';
+import { getApiBase } from "@/lib/apiBase";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const apiBase = getApiBase();
 
 function formatPrice(p) {
   if (p?.discount?.isActive) {
