@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getApiBase } from "@/lib/apiBase";
+import ProductCard from '@/components/ProductCard';
 
 const apiBase = getApiBase();
 
@@ -221,16 +222,9 @@ export default function ShopPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filtered.map((p) => (
-              <Link key={p._id || p.id || p.slug} href={`/shop/${p.slug}`} className="block bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md">
-                <div className="w-full h-56 sm:h-44 bg-gray-100">
-                  {p.images && p.images[0]?.url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={p.images[0].url} alt={p.name} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-sm text-stone-400">No image</div>
-                  )}
-                </div>
-                <div className="p-3">
+              <Link key={p._id || p.id || p.slug} href={`/shop/${p.slug}`} className="block rounded-lg overflow-hidden hover:shadow-md">
+                <ProductCard product={p} alt={p.name} />
+                <div className="p-3 bg-white">
                   <div className="text-sm font-medium text-stone-900 truncate">{p.name}</div>
                   <div className="text-sm text-stone-700 mt-1">{formatPrice(p)}</div>
                 </div>

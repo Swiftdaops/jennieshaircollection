@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiClient, getAxiosErrorMessage } from "@/lib/apiClient";
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2340000000000"; // replace with real number in env
+const WA_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2348169793790"; // replace with real number in env
 
 function formatCurrency(n) {
   return `₦${(n || 0).toLocaleString()}`;

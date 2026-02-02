@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AddToCartButton from '@/components/AddToCartButton';
+import ProductGallery from '@/components/ProductGallery';
 import { getApiBase } from "@/lib/apiBase";
 
 const apiBase = getApiBase();
@@ -43,16 +44,11 @@ export default async function ProductPage({ params }) {
   return (
     <div className="min-h-screen bg-[#cea88d] text-stone-900 py-8">
       <div className="mx-auto max-w-6xl px-4 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="w-full rounded-lg overflow-hidden bg-white shadow">
-          {product.images && product.images.length > 0 ? (
-              (() => {
-                const first = product.images[0];
-                const src = typeof first === 'string' ? first : (first?.url || first?.secure_url || '');
-                return src ? <img src={src} alt={product.name} className="w-full h-[540px] object-contain object-center bg-white" /> : <div className="w-full h-[420px] flex items-center justify-center text-sm text-stone-400">No image</div>;
-              })()
-            ) : (
-              <div className="w-full h-[420px] flex items-center justify-center text-sm text-stone-400">No image</div>
-            )}
+        <div>
+          {/* Product image gallery (client-side for interactivity) */}
+          <div className="w-full rounded-lg">
+            <ProductGallery images={product.images} alt={product.name} />
+          </div>
         </div>
 
         <div>

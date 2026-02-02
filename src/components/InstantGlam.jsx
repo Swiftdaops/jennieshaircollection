@@ -19,6 +19,84 @@ function formatPrice(p) {
   return `₦${p.price?.toLocaleString()}`;
 }
 
+function resolveSrc(img) {
+  if (!img) return "";
+  if (typeof img === "string") return img;
+  return img.url || img.secure_url || img.src || "";
+}
+
+function ProductSlide({ product }) {
+  const images = Array.isArray(product.images) ? product.images : [];
+  const [index, setIndex] = useState(0);
+
+  const src = resolveSrc(images[index]) || "";
+
+  function prev(e) {
+    e && e.preventDefault();
+    setIndex((i) => (i - 1 + images.length) % images.length);
+  }
+  function next(e) {
+    e && e.preventDefault();
+    setIndex((i) => (i + 1) % images.length);
+  }
+
+  return (
+    <div className="block bg-white/10 backdrop-blur-lg border border-white/10 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="relative">
+        <div className="w-full aspect-[3/4] bg-gray-50 flex items-center justify-center">
+          {src ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={src} alt={product.name} className="w-full h-full object-contain" />
+          ) : (
+            <div className="text-sm text-stone-400">No image</div>
+          )}
+        </div>
+
+        {images.length > 1 && (
+          <>
+            <button
+              aria-label="Previous"
+              onClick={prev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white/90 text-stone-800 rounded-full p-1 shadow"
+            >
+              ‹
+            </button>
+            <button
+              aria-label="Next"
+              onClick={next}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/70 hover:bg-white/90 text-stone-800 rounded-full p-1 shadow"
+            >
+              ›
+            </button>
+
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2 px-2">
+              {images.map((it, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setIndex(i); }}
+                  className={`w-12 h-16 rounded overflow-hidden border ${i === index ? 'border-stone-900' : 'border-transparent'}`}
+                >
+                  {resolveSrc(it) ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={resolveSrc(it)} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      <div className="p-3 bg-white/5 backdrop-blur-sm">
+        <div className="text-sm font-medium text-stone-900 truncate">{product.name}</div>
+        <div className="text-sm text-stone-700 mt-1">{formatPrice(product)}</div>
+      </div>
+    </div>
+  );
+}
+
 export default function WigsSection() {
   const [wigs, setWigs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -144,28 +222,11 @@ export default function WigsSection() {
             >
               {wigs.map((p) => (
                 <SwiperSlide key={p._id}>
-                  <Link
-                    href={`/shop/${p.slug}`}
-                    className="block bg-white/30 backdrop-blur-md rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
-                  >
-                    <div className="w-full h-60 sm:h-72 relative">
-                      {p.images && p.images[0]?.url ? (
-                        <img
-                          src={p.images[0].url}
-                          alt={p.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-sm text-stone-400">
-                          No image
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-3">
-                      <div className="text-sm font-medium text-stone-900 truncate">{p.name}</div>
-                      <div className="text-sm text-stone-700 mt-1">{formatPrice(p)}</div>
-                    </div>
-                  </Link>
+                  <div className="px-2 pb-4">
+                    <Link href={`/shop/${p.slug}`} className="block">
+                      <ProductSlide product={p} />
+                    </Link>
+                  </div>
                 </SwiperSlide>
               ))}
             </Swiper>

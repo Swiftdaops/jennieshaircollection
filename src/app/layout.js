@@ -16,14 +16,13 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   metadataBase: new URL("https://www.jennieshairscollection.store"), // change to your real domain
-
   title: {
-    default: "Jennie’s Hairs Collection | Luxury Wigs & Hair Extensions",
-    template: "%s | Jennie’s Hairs Collection",
+    default: "Jennie's Hairs Collection | Luxury Wigs & Hair Extensions",
+    template: "%s | Jennie's Hairs Collection",
   },
 
   description:
-    "Jennie’s Hairs Collection offers premium luxury wigs and hair extensions in Nigeria. Elegant, high-quality hair for queens and princesses who lead.",
+    "Jennie's Hairs Collection offers premium luxury wigs and hair extensions in Nigeria. Elegant, high-quality hair for queens and princesses who lead.",
 
   keywords: [
     "luxury wigs Nigeria",
@@ -32,25 +31,25 @@ export const metadata = {
     "blonde wigs",
     "lace frontal wigs",
     "luxury hair Lagos",
-    "Jennie’s Hairs Collection",
+    "Jennie's Hairs Collection",
   ],
 
-  authors: [{ name: "Jennie’s Hairs Collection" }],
-  creator: "Jennie’s Hairs Collection",
-  publisher: "Jennie’s Hairs Collection",
+  authors: [{ name: "Jennie's Hairs Collection" }],
+  creator: "Jennie's Hairs Collection",
+  publisher: "Jennie's Hairs Collection",
 
   openGraph: {
-    title: "Jennie’s Hairs Collection | Luxury Wigs for Elegant Queens",
+    title: "Jennie's Hairs Collection | Luxury Wigs for Elegant Queens",
     description:
       "Premium luxury wigs and hair extensions designed for elegance, confidence, and royalty.",
     url: "https://www.jennieshairscollection.store",
-    siteName: "Jennie’s Hairs Collection",
+    siteName: "Jennie's Hairs Collection",
     images: [
       {
         url: "https://res.cloudinary.com/ds2cq1vue/image/upload/v1769979572/7388794-removebg-preview_wirqwz.png",
         width: 1200,
         height: 630,
-        alt: "Jennie’s Hairs Collection Logo",
+        alt: "Jennie's Hairs Collection Logo",
       },
     ],
     locale: "en_NG",
@@ -59,7 +58,7 @@ export const metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Jennie’s Hairs Collection | Luxury Wigs",
+    title: "Jennie's Hairs Collection | Luxury Wigs",
     description:
       "Luxury wigs and hair extensions crafted for queens. Confidence, elegance, and beauty.",
     images: [
