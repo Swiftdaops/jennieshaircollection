@@ -23,7 +23,7 @@ export default function AdminLogin() {
       await login({ email, password });
       console.debug("AdminLogin: login succeeded, waiting for /api/auth/me to be available");
 
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
       async function waitForMe(attempts = 8, interval = 250) {
         for (let i = 0; i < attempts; i++) {
@@ -53,7 +53,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-50">
+    <div className="min-h-screen flex items-center justify-center bg-nude text-stone-950">
       <form onSubmit={handleSubmit} className="p-8 bg-white rounded shadow-md w-full max-w-sm">
         <h2 className="text-xl font-semibold mb-4">Admin Login</h2>
         {error && <div className="mb-2 text-red-600">{error}</div>}
@@ -78,7 +78,7 @@ export default function AdminLogin() {
           />
         </label>
         <button
-          className="w-full bg-foreground text-background py-2 rounded disabled:opacity-60"
+          className="w-full bg-stone-900 text-white py-2 rounded disabled:opacity-60"
           type="submit"
           disabled={submitting}
         >

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
+const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);

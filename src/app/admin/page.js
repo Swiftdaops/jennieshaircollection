@@ -23,7 +23,7 @@ export default function AdminIndex() {
     async function loadInsights() {
       setLoadingInsights(true);
       try {
-        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com") + "/api/orders/insights", {
+        const res = await fetch((process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000") + "/api/orders/insights", {
           credentials: "include",
         });
         if (res.ok) {
@@ -42,7 +42,7 @@ export default function AdminIndex() {
 
   if (loading) return <div className="p-8">Loading...</div>;
 
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
+  const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
   async function handleMarkBestSeller() {
     const id = window.prompt("Enter product ID to mark as best seller:");

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
+const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 function formatPrice(p) {
   if (p?.discount?.isActive) {

@@ -12,8 +12,12 @@ function formatCurrency(n) {
 export default function CheckoutPage() {
   const [items, setItems] = useState([]);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [paid, setPaid] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     try {
@@ -46,12 +50,58 @@ export default function CheckoutPage() {
   }
 
   function openWhatsApp() {
-    const products = items.map((it) => `${it.name} x${it.qty}`).join("; ");
-    const txn = `TXN-${Date.now().toString().slice(-6)}`;
-    const message = `Hello Jennie, I would like to confirm my payment. My name is ${name || "[your name]"}. Order: ${products}. Total: ${formatCurrency(total)}. Transaction reference: ${txn}.`;
-    const encoded = encodeURIComponent(message);
-    const url = `https://wa.me/${WA_NUMBER}?text=${encoded}`;
-    window.open(url, "_blank");
+    // Save order to backend, send admin email, then open WhatsApp confirmation
+    (async () => {
+      if (!name.trim()) return alert("Please enter your name");
+      if (!phone.trim()) return alert("Please enter your WhatsApp number");
+      if (!address.trim()) return alert("Please enter your delivery address");
+      if (items.length === 0) return alert("Your cart is empty");
+
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const payload = {
+        customerName: name.trim(),
+        whatsappNumber: phone.trim(),
+        email: email.trim() || undefined,
+        address: address.trim(),
+        items: items.map((it) => ({
+          productId: it.id,
+          name: it.name,
+          price: Number(it.price || 0),
+          quantity: Number(it.qty || 1),
+        })),
+        totalAmount: Number(total || 0),
+        shipping: 0,
+        tax: 0,
+      };
+
+      setSubmitting(true);
+      try {
+        const res = await fetch(`${apiBase}/api/orders/checkout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await res.json().catch(() => null);
+        if (!res.ok) {
+          return alert(data?.message || "Could not create order. Please try again.");
+        }
+
+        try {
+          localStorage.removeItem("cart");
+          window.dispatchEvent(new CustomEvent("cartUpdated"));
+        } catch {
+          // ignore
+        }
+
+        const url = data?.whatsappLink || `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hello Jennie, I just placed an order. My name is ${name.trim()}.`)}`;
+        window.open(url, "_blank");
+      } catch (e) {
+        alert(e?.message || "Network error. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
+    })();
   }
 
   return (
@@ -123,12 +173,28 @@ export default function CheckoutPage() {
                     <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" className="w-full border rounded px-3 py-2" />
                   </div>
 
+                  <div className="mt-4">
+                    <label className="block text-sm text-zinc-700 mb-2">WhatsApp number</label>
+                    <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="e.g. 2348169793790" className="w-full border rounded px-3 py-2" />
+                  </div>
+
+                  <div className="mt-4">
+                    <label className="block text-sm text-zinc-700 mb-2">Email (optional)</label>
+                    <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="w-full border rounded px-3 py-2" />
+                  </div>
+
+                  <div className="mt-4">
+                    <label className="block text-sm text-zinc-700 mb-2">Delivery address</label>
+                    <textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Enter your delivery address" className="w-full border rounded px-3 py-2 min-h-[90px]" />
+                  </div>
+
                   <div className="mt-4 flex items-center gap-3">
                     <button
                       onClick={openWhatsApp}
-                      className="ml-auto text-[#d4af37] font-semibold text-lg"
+                      disabled={submitting}
+                      className="ml-auto text-[#d4af37] font-semibold text-lg disabled:opacity-60"
                     >
-                      I have paid
+                      {submitting ? "Saving order..." : "I have paid"}
                     </button>
                   </div>
                 </div>

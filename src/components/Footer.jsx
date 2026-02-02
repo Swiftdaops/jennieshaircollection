@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const apiBase =
-  process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
+const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function Footer() {
   const [form, setForm] = useState({ name: "", email: "", phone: "" });

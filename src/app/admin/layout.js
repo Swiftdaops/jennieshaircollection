@@ -9,6 +9,7 @@ export default function AdminLayout({ children }) {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const isLogin = pathname && pathname.startsWith("/admin/login");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function AdminLayout({ children }) {
     <div className="min-h-screen w-full overflow-x-hidden bg-nude text-stone-950">
       <div className="flex min-h-screen">
         {/* ================= DESKTOP SIDEBAR ================= */}
-        {pathname !== "/admin/login" && (
+        {!isLogin && (
           <aside className="hidden md:flex md:w-64 flex-col border-r border-zinc-200 bg-nude">
           <div className="p-4 border-b">
             <div className="text-lg font-semibold">Admin</div>
@@ -41,7 +42,7 @@ export default function AdminLayout({ children }) {
         {/* ================= MAIN AREA ================= */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* ================= MOBILE TOP BAR ================= */}
-          <header className="md:hidden sticky top-0 z-30 flex items-center justify-between border-b bg-nude px-3 py-2">
+          <header className={"md:hidden sticky top-0 z-30 flex items-center justify-between border-b bg-nude px-3 py-2" + (isLogin ? " hidden" : "")}>
             <button
               aria-label="Open menu"
               onClick={() => setMobileOpen(true)}
@@ -61,7 +62,7 @@ export default function AdminLayout({ children }) {
       </div>
 
       {/* ================= MOBILE DRAWER ================= */}
-      {mobileOpen && pathname !== "/admin/login" && (
+      {mobileOpen && !isLogin && (
         <div className="fixed inset-0 z-40 md:hidden">
           {/* overlay */}
           <div

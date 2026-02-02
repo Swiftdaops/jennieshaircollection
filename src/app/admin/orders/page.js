@@ -11,7 +11,7 @@ import {
   TableBody,
 } from "@/components/ui/table";
 
-const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://jennieshairsbackend.onrender.com";
+const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
